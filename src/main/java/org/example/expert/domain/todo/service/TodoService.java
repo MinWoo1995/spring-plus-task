@@ -17,6 +17,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -25,6 +29,7 @@ public class TodoService {
     private final TodoRepository todoRepository;
     private final WeatherClient weatherClient;
 
+    @Transactional
     public TodoSaveResponse saveTodo(AuthUser authUser, TodoSaveRequest todoSaveRequest) {
         User user = User.fromAuthUser(authUser);
 
@@ -43,24 +48,37 @@ public class TodoService {
                 savedTodo.getTitle(),
                 savedTodo.getContents(),
                 weather,
-                new UserResponse(user.getId(), user.getEmail())
+                new UserResponse(user.getId(), user.getEmail(),user.getNickname())
         );
     }
 
-    public Page<TodoResponse> getTodos(int page, int size) {
+    public Page<TodoResponse> getTodos(int page, int size,String weather, String startDate, String endDate) {
         Pageable pageable = PageRequest.of(page - 1, size);
 
-        Page<Todo> todos = todoRepository.findAllByOrderByModifiedAtDesc(pageable);
+        LocalDateTime start = (startDate != null) ? LocalDate.parse(startDate).atStartOfDay() : null;
+        LocalDateTime end = (endDate != null) ? LocalDate.parse(endDate).atTime(LocalTime.MAX) : null;
 
-        return todos.map(todo -> new TodoResponse(
-                todo.getId(),
-                todo.getTitle(),
-                todo.getContents(),
-                todo.getWeather(),
-                new UserResponse(todo.getUser().getId(), todo.getUser().getEmail()),
-                todo.getCreatedAt(),
-                todo.getModifiedAt()
-        ));
+        Page<Todo> todos = todoRepository.findAllByOrderByModifiedAtDesc(weather, start, end, pageable);
+
+        return todos.map(todo -> {
+            User user = todo.getUser();
+
+            UserResponse userResponse = new UserResponse(
+                    user.getId(),
+                    user.getEmail(),
+                    user.getNickname()
+            );
+
+            return new TodoResponse(
+                    todo.getId(),
+                    todo.getTitle(),
+                    todo.getContents(),
+                    todo.getWeather(),
+                    userResponse,
+                    todo.getCreatedAt(),
+                    todo.getModifiedAt()
+            );
+        });
     }
 
     public TodoResponse getTodo(long todoId) {
@@ -74,7 +92,7 @@ public class TodoService {
                 todo.getTitle(),
                 todo.getContents(),
                 todo.getWeather(),
-                new UserResponse(user.getId(), user.getEmail()),
+                new UserResponse(user.getId(), user.getEmail(),user.getNickname()),
                 todo.getCreatedAt(),
                 todo.getModifiedAt()
         );
