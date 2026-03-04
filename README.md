@@ -57,29 +57,29 @@ Spring Security 기반 인증 시스템 전환 프로젝트
 
 src/main/java/org/example/expert/
 ├── config/
-│   ├── PasswordEncoder.java       [주석] (SecurityConfig 내 Bean으로 통합됨)
-│   ├── FilterConfig.java          [주석] (SecurityFilterChain으로 통합됨)
-│   ├── WebConfig.java             [수정] (ArgumentResolver 등록 로직 제거)
-│   ├── JwtUtil.java               [수정] (substringToken 예외 로직 제거)
-│   └── SecurityConfig.java        [신규] Spring Security 전역 설정 및 FilterChain 정의
+│   ├── PasswordEncoder.java       # [주석] SecurityConfig 내 Bean으로 통합
+│   ├── FilterConfig.java          # [주석] SecurityFilterChain으로 통합
+│   ├── WebConfig.java             # [수정] ArgumentResolver 등록 로직 제거
+│   ├── JwtUtil.java               # [수정] substringToken 예외 로직 제거
+│   └── SecurityConfig.java        # [신규] Spring Security 전역 설정 및 FilterChain 정의
 │
 ├── domain/
 │   ├── auth/
-│   │   └── security/              [신규 패키지] Security 관련 핵심 로직
-│   │       ├── JwtSecurityFilter.java    [신규] JWT 검증 전용 필터
-│   │       ├── UserDetailsImpl.java      [신규] 인증 유저 정보를 담는 표준 객체
-│   │       └── UserDetailsServiceImpl.java [신규] DB 연동 유저 상세 서비스
+│   │   └── security/              # [신규] Security 관련 핵심 패키지
+│   │       ├── JwtSecurityFilter.java    # [신규] JWT 검증 전용 필터
+│   │       ├── UserDetailsImpl.java      # [신규] 인증 유저 표준 객체
+│   │       └── UserDetailsServiceImpl.java # [신규] DB 연동 유저 상세 서비스
 │   │
 │   ├── common/
 │   │   ├── annotation/
-│   │   │   └── Auth.java          [주석] (@AuthenticationPrincipal로 대체)
+│   │   │   └── Auth.java          # [주석] @AuthenticationPrincipal로 대체
 │   │   └── exception/
 │   │       └── ServerException.java
 │   │
-│   ├── todo/                      (기존 도메인)
+│   ├── todo/                      # (기존 도메인)
 │   │   └── controller/
-│   │       └── TodoController.java [수정] (@AuthenticationPrincipal 도입)
+│   │       └── TodoController.java # [수정] @AuthenticationPrincipal 도입
 │   │
-│   └── user/                      (기존 도메인)
+│   └── user/                      # (기존 도메인)
 │       └── controller/
-│           └── UserController.java [수정] (@AuthenticationPrincipal 도입)
+│           └── UserController.java # [수정] @AuthenticationPrincipal 도입
