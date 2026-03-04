@@ -55,6 +55,7 @@ Spring Security 기반 인증 시스템 전환 프로젝트
 * 클린 코드: 더 이상 사용하지 않는 FilterConfig, AuthUserArgumentResolver, WebConfig 내 관련 설정 등을 모두 제거하여 프로젝트 구조를 단순화했습니다.
 
 
+```text
 src/main/java/org/example/expert/
 ├── config/
 │   ├── PasswordEncoder.java       # [주석] SecurityConfig 내 Bean으로 통합
